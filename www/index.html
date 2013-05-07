@@ -1,42 +1,82 @@
 <!DOCTYPE html>
-<!--
-    Licensed to the Apache Software Foundation (ASF) under one
-    or more contributor license agreements.  See the NOTICE file
-    distributed with this work for additional information
-    regarding copyright ownership.  The ASF licenses this file
-    to you under the Apache License, Version 2.0 (the
-    "License"); you may not use this file except in compliance
-    with the License.  You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing,
-    software distributed under the License is distributed on an
-    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-     KIND, either express or implied.  See the License for the
-    specific language governing permissions and limitations
-    under the License.
--->
 <html>
-    <head>
-        <meta charset="utf-8" />
-        <meta name="format-detection" content="telephone=no" />
-        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
-        <link rel="stylesheet" type="text/css" href="css/index.css" />
-        <title>Hello World</title>
-    </head>
-    <body>
-        <div class="app">
-            <h1>PhoneGap</h1>
-            <div id="deviceready" class="blink">
-                <p class="event listening">Connecting to Device</p>
-                <p class="event received">Device is Ready</p>
-            </div>
-        </div>
-        <script type="text/javascript" src="phonegap.js"></script>
-        <script type="text/javascript" src="js/index.js"></script>
-        <script type="text/javascript">
-            app.initialize();
-        </script>
-    </body>
+<meta charset="UTF-8">
+<body>
+<h2>DMR LastHeard</h2>
+<a href="https://www.oe8bck.at/LastHeard/LastHeard.html">LastHeard</a>
+<a href="https://www.oe8bck.at/LastHeard/RepeaterMap.html">RepeaterMap</a>
+<p>
+<form><input type=button value="Refresh"
+onClick="window.location.reload()"></form>
+<script>
+
+// Einlesen über JSON Object
+
+if (window.XMLHttpRequest)
+  {// code for IE7+, Firefox, Chrome, Opera, Safari
+  xmlhttp=new XMLHttpRequest();
+  }
+else
+  {// code for IE6, IE5
+  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+  }
+xmlhttp.open("POST","https://www.oe8bck.at/LastHeard/LastHeard.php?t=" + Math.random(),false);
+xmlhttp.send();
+try
+{
+    var obj2 = eval ("(" + xmlhttp.responseText + ")");
+}
+catch(err)
+{
+	txt="Es gab einen Fehler auf dieser Seite.\n\n";
+	txt+="Error description: " + err.message + "\n\n";
+        txt+="Zum Fortfahren OK klicken.\n\n";
+        alert(txt);
+}
+
+// Tabelle darstellen
+
+	var d = new Date();
+	document.write(d.toLocaleString().italics());
+	
+	document.write("<hr><table cellpadding=\"5\"><tr bgcolor=\"yellow\">");
+
+	document.write("<th>Datum</th><th>Rufzeichen</th><th>Nummer</th><th>via Relais</th><th>via TS</th><th>via TG</th><th>Flags</th><th>RSSI[dB]</th><th>Dauer[s]</th></tr><tr>");
+
+	var actDay = new Date(100);
+	for (var i=0;i<obj2.lastHeardElements.length;i++)
+	{
+		var d = new Date;
+		d.setTime(obj2.lastHeardElements[i].datum*1000); 
+		if (d.getDate() != actDay.getDate() )
+		{
+			document.write("<tr><td>" + d.toDateString() + "</td></tr>");
+			actDay=d;
+		}
+		if (i % 2 == 0)
+		{
+			document.write("<tr bgcolor=\"lightyellow\">");
+		}
+		else
+		{
+			document.write("<tr>");
+		}	
+
+		document.write("<td>" + d.toLocaleTimeString() + "</td>");
+		rfz = obj2.lastHeardElements[i].rufzeichen;
+		document.write("<td>" + "<a href=http://qrz.com/db/"+rfz+" target=\"_blank\">"+rfz+"</a>" + "</td>");
+		document.write("<td>" + obj2.lastHeardElements[i].nummer + "</td>");
+		document.write("<td>" + obj2.lastHeardElements[i].viarelais + "</td>");
+		document.write("<td>" + obj2.lastHeardElements[i].viats + "</td>");
+		document.write("<td>" + obj2.lastHeardElements[i].viatg + "</td>");
+		document.write("<td>" + obj2.lastHeardElements[i].flags + "</td>");
+		document.write("<td>" + obj2.lastHeardElements[i].rssi + "</td>");
+		document.write("<td>" + (obj2.lastHeardElements[i].duration/1000).toFixed(1) + "</td>");
+		document.write("</tr>");
+	}
+
+	document.write("</tr></table>");
+
+</script>
+</body>
 </html>
