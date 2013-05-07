@@ -3,80 +3,11 @@
 <meta charset="UTF-8">
 <body>
 <h2>DMR LastHeard</h2>
-<a href="https://www.oe8bck.at/LastHeard/LastHeard.html">LastHeard</a>
-<a href="https://www.oe8bck.at/LastHeard/RepeaterMap.html">RepeaterMap</a>
+<a href="LastHeard.html">LastHeard</a>
+<a href="RepeaterMap.html">RepeaterMap</a>
 <p>
 <form><input type=button value="Refresh"
 onClick="window.location.reload()"></form>
-<script>
 
-// Einlesen über JSON Object
-
-if (window.XMLHttpRequest)
-  {// code for IE7+, Firefox, Chrome, Opera, Safari
-  xmlhttp=new XMLHttpRequest();
-  }
-else
-  {// code for IE6, IE5
-  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-  }
-xmlhttp.open("POST","https://www.oe8bck.at/LastHeard/LastHeard.php?t=" + Math.random(),false);
-xmlhttp.send();
-try
-{
-    var obj2 = eval ("(" + xmlhttp.responseText + ")");
-}
-catch(err)
-{
-	txt="Es gab einen Fehler auf dieser Seite.\n\n";
-	txt+="Error description: " + err.message + "\n\n";
-        txt+="Zum Fortfahren OK klicken.\n\n";
-        alert(txt);
-}
-
-// Tabelle darstellen
-
-	var d = new Date();
-	document.write(d.toLocaleString().italics());
-	
-	document.write("<hr><table cellpadding=\"5\"><tr bgcolor=\"yellow\">");
-
-	document.write("<th>Datum</th><th>Rufzeichen</th><th>Nummer</th><th>via Relais</th><th>via TS</th><th>via TG</th><th>Flags</th><th>RSSI[dB]</th><th>Dauer[s]</th></tr><tr>");
-
-	var actDay = new Date(100);
-	for (var i=0;i<obj2.lastHeardElements.length;i++)
-	{
-		var d = new Date;
-		d.setTime(obj2.lastHeardElements[i].datum*1000); 
-		if (d.getDate() != actDay.getDate() )
-		{
-			document.write("<tr><td>" + d.toDateString() + "</td></tr>");
-			actDay=d;
-		}
-		if (i % 2 == 0)
-		{
-			document.write("<tr bgcolor=\"lightyellow\">");
-		}
-		else
-		{
-			document.write("<tr>");
-		}	
-
-		document.write("<td>" + d.toLocaleTimeString() + "</td>");
-		rfz = obj2.lastHeardElements[i].rufzeichen;
-		document.write("<td>" + "<a href=http://qrz.com/db/"+rfz+" target=\"_blank\">"+rfz+"</a>" + "</td>");
-		document.write("<td>" + obj2.lastHeardElements[i].nummer + "</td>");
-		document.write("<td>" + obj2.lastHeardElements[i].viarelais + "</td>");
-		document.write("<td>" + obj2.lastHeardElements[i].viats + "</td>");
-		document.write("<td>" + obj2.lastHeardElements[i].viatg + "</td>");
-		document.write("<td>" + obj2.lastHeardElements[i].flags + "</td>");
-		document.write("<td>" + obj2.lastHeardElements[i].rssi + "</td>");
-		document.write("<td>" + (obj2.lastHeardElements[i].duration/1000).toFixed(1) + "</td>");
-		document.write("</tr>");
-	}
-
-	document.write("</tr></table>");
-
-</script>
 </body>
 </html>

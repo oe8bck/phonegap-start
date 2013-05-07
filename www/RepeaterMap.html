@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<meta charset="UTF-8">
+<body>
+<h2>DMR Repeater Map</h2>
+<a href="LastHeard.html">LastHeard</a>
+<a href="RepeaterMap.html">RepeaterMap</a>
+<p>
+<form><input type=button value="Refresh" onClick="window.location.reload()"></form>
+<script>
+
+if (window.XMLHttpRequest)
+  {// code for IE7+, Firefox, Chrome, Opera, Safari
+  xmlhttp=new XMLHttpRequest();
+  }
+else
+  {// code for IE6, IE5
+  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+  }
+xmlhttp.open("POST","https://www.oe8bck.at/LastHeard/RepeaterMap.php?t=" + Math.random(),false);
+xmlhttp.send();
+try
+{
+	var obj2 = eval ("(" + xmlhttp.responseText + ")");
+}
+catch(err)
+{
+	txt="Es gab einen Fehler auf dieser Seite.\n\n";
+	txt+="Error description: " + err.message + "\n\n";
+        txt+="Zum Fortfahren OK klicken.\n\n";
+        alert(txt);
+}
+
+// Tabelle darstellen
+
+	var d = new Date();
+	document.write(d.toLocaleString().italics());
+	
+	document.write("<hr><table cellpadding=\"5\"><tr bgcolor=\"yellow\">");
+
+	document.write("<th>Rufzeichen</th><th>Name</th><th>Nummer</th><th>QRG</th><th>Ablage</th><th>Lat</th><th>Lon</th><th>cc</th>");
+
+	var actDay = new Date(100);
+	for (var i=0;i<obj2.repeaterMapElements.length;i++)
+	{
+		document.write("<tr>");
+		rfz = obj2.repeaterMapElements[i].rufzeichen;
+		document.write("<td><a href=http://qrz.com/db/"+rfz+">"+rfz+"</a>" + "</td>");
+		
+		var url_map = "<a href=http://maps.google.com/maps?q=loc:" + obj2.repeaterMapElements[i].lat + "," + obj2.repeaterMapElements[i].lon + "&t=m&z=11 target=\"_blank\">";
+		//document.write("<td><a href=http://maps.google.com/maps?q=loc:" + obj2.repeaterMapElements[i].lat + "," + obj2.repeaterMapElements[i].lon + "&t=m&z=11>" + obj2.repeaterMapElements[i].name + "</a></td>");
+		document.write("<td>" + url_map + obj2.repeaterMapElements[i].name + "</a></td>");
+		document.write("<td>" + obj2.repeaterMapElements[i].nummer + "</td>");
+		document.write("<td>" + obj2.repeaterMapElements[i].qrg + "</td>");
+		document.write("<td>" + obj2.repeaterMapElements[i].ablage + "</td>");
+		document.write("<td>" + url_map + obj2.repeaterMapElements[i].lat + "</a></td>");
+		document.write("<td>" + url_map + obj2.repeaterMapElements[i].lon +"</a></td>");
+		document.write("<td>" + obj2.repeaterMapElements[i].cc + "</td>");
+		document.write("</tr>");
+	}
+
+	document.write("</tr></table>");
+
+</script>
+</body>
+</html>
+
